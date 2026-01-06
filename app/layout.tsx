@@ -1,6 +1,8 @@
+import './globals.css'
+
 export const metadata = {
-  title: '鍼灸国家試験対策',
-  description: '穴埋め問題トレーニング',
+  title: '鍼灸国試対策アプリ',
+  description: 'スマホで学ぶ解剖学',
 }
 
 export default function RootLayout({
@@ -10,7 +12,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <body>{children}</body>
+      <head>
+        <script src="https://cdn.tailwindcss.com"></script>
+      </head>
+      <body className="antialiased">{children}</body>
     </html>
   )
 }
