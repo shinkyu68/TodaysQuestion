@@ -2,16 +2,10 @@
 import { useState } from 'react';
 
 export default function Home() {
-  // 開いている穴埋め番号を記録するセット
   const [openIds, setOpenIds] = useState<number[]>([]);
 
-  // クリックしたIDの表示・非表示を切り替える関数
   const toggleAnswer = (id: number) => {
-    if (openIds.includes(id)) {
-      setOpenIds(openIds.filter(i => i !== id)); // すでにあれば消す
-    } else {
-      setOpenIds([...openIds, id]); // なければ追加する
-    }
+    setOpenIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
   };
 
   const quizData = {
@@ -31,45 +25,55 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
+    <main className="min-h-screen bg-[#f0f2f5] flex items-start justify-center p-4 pt-10 font-sans">
+      <div className="w-full max-w-md bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden border border-white">
         
-        {/* ヘッダー */}
-        <div className="bg-blue-600 p-6 text-white text-center">
-          <span className="text-xs font-bold bg-white/20 px-3 py-1 rounded-full uppercase">
-            {quizData.category}
-          </span>
-          <h1 className="text-xl font-bold mt-2">{quizData.title}</h1>
+        {/* ヘッダー：グラデーションとシャドウ */}
+        <div className="bg-gradient-to-br from-indigo-600 via-blue-600 to-cyan-500 p-8 text-white relative">
+          <div className="absolute top-4 right-6 opacity-20 text-4xl font-black">01</div>
+          <p className="text-xs font-bold tracking-[0.2em] opacity-80 mb-1">{quizData.category}</p>
+          <h1 className="text-2xl font-black tracking-tighter">{quizData.title}</h1>
         </div>
 
-        {/* 問題文 */}
-        <div className="p-6">
-          <div className="bg-gray-50 rounded-xl p-5 leading-relaxed text-gray-800 text-lg shadow-inner">
-            {quizData.textChunks.map((chunk, index) => (
-              chunk.type === "text" ? (
-                <span key={index}>{chunk.content}</span>
-              ) : (
-                <button
-                  key={index}
-                  onClick={() => toggleAnswer(chunk.id!)}
-                  className={`mx-1 inline-flex items-center justify-center min-w-[4rem] px-2 py-0.5 rounded-md font-bold transition-all ${
-                    openIds.includes(chunk.id!) 
-                    ? "bg-red-100 text-red-600 border border-red-200" 
-                    : "bg-red-500 text-white shadow-sm active:scale-95"
-                  }`}
-                >
-                  {openIds.includes(chunk.id!) ? chunk.answer : `(${chunk.id})`}
-                </button>
-              )
-            ))}
+        {/* コンテンツ：読みやすさ重視のタイポグラフィ */}
+        <div className="p-8">
+          <div className="relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-100 to-cyan-100 rounded-2xl blur opacity-25"></div>
+            <div className="relative bg-white rounded-2xl p-6 leading-[2.2] text-slate-700 text-[1.15rem] border border-slate-50">
+              {quizData.textChunks.map((chunk, index) => (
+                chunk.type === "text" ? (
+                  <span key={index}>{chunk.content}</span>
+                ) : (
+                  <button
+                    key={index}
+                    onClick={() => toggleAnswer(chunk.id!)}
+                    className={`mx-1.5 inline-flex items-center justify-center min-w-[5rem] px-3 py-1 rounded-xl font-bold transition-all duration-500 shadow-sm ${
+                      openIds.includes(chunk.id!) 
+                      ? "bg-rose-50 text-rose-600 border-rose-200 scale-105" 
+                      : "bg-rose-500 text-rose-500 hover:brightness-110 active:scale-90"
+                    }`}
+                  >
+                    {openIds.includes(chunk.id!) ? chunk.answer : `?`}
+                  </button>
+                )
+              ))}
+            </div>
           </div>
 
-          <button 
-            onClick={() => setOpenIds([])}
-            className="mt-6 w-full py-3 bg-gray-200 text-gray-600 rounded-xl font-bold hover:bg-gray-300 transition"
-          >
-            すべて隠す
-          </button>
+          <div className="mt-10 space-y-3">
+            <button 
+              onClick={() => setOpenIds([1,2,3,4])}
+              className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-lg shadow-xl active:scale-[0.98] transition-all"
+            >
+              すべての正解を表示
+            </button>
+            <button 
+              onClick={() => setOpenIds([])}
+              className="w-full py-3 bg-white text-slate-400 rounded-2xl font-bold text-sm hover:text-slate-600 transition-colors"
+            >
+              リセットして隠す
+            </button>
+          </div>
         </div>
       </div>
     </main>
