@@ -4,52 +4,77 @@ import { useState } from 'react';
 export default function Home() {
   const [showAll, setShowAll] = useState(false);
 
-  // 穴埋め問題のデータ
   const quizData = {
     title: "門脈循環トレーニング",
-    text: "通常、多くの臓器の静脈は直接（ ① ）へと戻りますが、胃、小腸、大腸、直腸、膵臓、脾臓、胆嚢などの（ ② ）臓器の静脈は、一度（ ③ ）という太い血管にまとめられて（ ④ ）に流入します。これに対し、（ ④ ）に酸素を供給する（ ⑦ ）は肝動脈です。",
-    answers: {
-      1: '下大静脈',
-      2: '腹腔内',
-      3: '門脈',
-      4: '肝臓',
-      7: '栄養血管',
-    }
+    category: "解剖学 / 生理学",
+    textChunks: [
+      { type: "text", content: "通常、多くの臓器の静脈は直接（" },
+      { type: "blank", id: 1, answer: "下大静脈" },
+      { type: "text", content: "）へと戻りますが、胃、小腸、大腸、直腸、膵臓、脾臓、胆嚢などの（" },
+      { type: "blank", id: 2, answer: "腹腔内" },
+      { type: "text", content: "）臓器の静脈は、一度（" },
+      { type: "blank", id: 3, answer: "門脈" },
+      { type: "text", content: "）という太い血管にまとめられて（" },
+      { type: "blank", id: 4, answer: "肝臓" },
+      { type: "text", content: "）に流入します。" },
+    ],
+    footerInfo: "※門脈は消化管から吸収された栄養物を肝臓に運ぶ「機能血管」です。"
   };
 
   return (
-    <main className="min-h-screen p-8 bg-gray-100">
-      <div className="max-w-2xl mx-auto bg-white p-6 rounded-2xl shadow-xl">
-        <h1 className="text-2xl font-bold mb-6 text-blue-800 border-b-2 pb-2">
-          {quizData.title}
-        </h1>
+    <main className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-100">
         
-        <p className="text-lg leading-loose text-gray-700 mb-8">
-          通常、多くの臓器の静脈は直接（ 
-          <span className="font-bold text-red-600 border-b-2 border-red-300 px-2 cursor-pointer" onClick={() => setShowAll(!showAll)}>
-            {showAll ? quizData.answers[1] : ' ① '}
+        {/* ヘッダー部分 */}
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white text-center">
+          <span className="text-xs font-bold bg-white/20 px-3 py-1 rounded-full uppercase tracking-wider">
+            {quizData.category}
           </span>
-          ）へと戻りますが、胃、小腸、大腸、直腸、膵臓、脾臓、胆嚢などの（ 
-          <span className="font-bold text-red-600 border-b-2 border-red-300 px-2 cursor-pointer" onClick={() => setShowAll(!showAll)}>
-            {showAll ? quizData.answers[2] : ' ② '}
-          </span>
-          ）臓器の静脈は、一度（ 
-          <span className="font-bold text-red-600 border-b-2 border-red-300 px-2 cursor-pointer" onClick={() => setShowAll(!showAll)}>
-            {showAll ? quizData.answers[3] : ' ③ '}
-          </span>
-          ）という太い血管にまとめられて（ 
-          <span className="font-bold text-red-600 border-b-2 border-red-300 px-2 cursor-pointer" onClick={() => setShowAll(!showAll)}>
-            {showAll ? quizData.answers[4] : ' ④ '}
-          </span>
-          ）に流入します。
-        </p>
+          <h1 className="text-2xl font-black mt-2 tracking-tighter">
+            {quizData.title}
+          </h1>
+        </div>
 
-        <button 
-          onClick={() => setShowAll(!showAll)}
-          className="w-full py-4 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition"
-        >
-          {showAll ? "答えを隠す" : "答えをすべて表示"}
-        </button>
+        {/* 問題文エリア */}
+        <div className="p-8">
+          <div className="bg-slate-50 rounded-2xl p-6 leading-loose text-slate-800 text-lg shadow-inner border border-slate-100">
+            {quizData.textChunks.map((chunk, index) => (
+              chunk.type === "text" ? (
+                <span key={index}>{chunk.content}</span>
+              ) : (
+                <button
+                  key={index}
+                  onClick={() => setShowAll(!showAll)}
+                  className={`mx-1 inline-flex items-center justify-center min-w-[5rem] px-2 py-0.5 rounded-md font-bold transition-all duration-300 ${
+                    showAll 
+                    ? "bg-red-50 text-red-600" 
+                    : "bg-red-500 text-red-500 hover:bg-red-400"
+                  }`}
+                >
+                  {showAll ? chunk.answer : `(${chunk.id})`}
+                </button>
+              )
+            ))}
+          </div>
+
+          <p className="mt-6 text-sm text-slate-500 italic text-center">
+            {quizData.footerInfo}
+          </p>
+        </div>
+
+        {/* アクションボタン */}
+        <div className="px-8 pb-8">
+          <button 
+            onClick={() => setShowAll(!showAll)}
+            className={`w-full py-4 rounded-2xl font-black text-lg transition-all active:scale-95 shadow-lg ${
+              showAll 
+              ? "bg-slate-200 text-slate-600" 
+              : "bg-orange-500 text-white hover:bg-orange-600 shadow-orange-200"
+            }`}
+          >
+            {showAll ? "答えを隠す" : "すべて表示"}
+          </button>
+        </div>
       </div>
     </main>
   );
