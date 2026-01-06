@@ -2,7 +2,17 @@
 import { useState } from 'react';
 
 export default function Home() {
-  const [showAll, setShowAll] = useState(false);
+  // 開いている穴埋め番号を記録するセット
+  const [openIds, setOpenIds] = useState<number[]>([]);
+
+  // クリックしたIDの表示・非表示を切り替える関数
+  const toggleAnswer = (id: number) => {
+    if (openIds.includes(id)) {
+      setOpenIds(openIds.filter(i => i !== id)); // すでにあれば消す
+    } else {
+      setOpenIds([...openIds, id]); // なければ追加する
+    }
+  };
 
   const quizData = {
     title: "門脈循環トレーニング",
@@ -17,62 +27,48 @@ export default function Home() {
       { type: "text", content: "）という太い血管にまとめられて（" },
       { type: "blank", id: 4, answer: "肝臓" },
       { type: "text", content: "）に流入します。" },
-    ],
-    footerInfo: "※門脈は消化管から吸収された栄養物を肝臓に運ぶ「機能血管」です。"
+    ]
   };
 
   return (
-    <main className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-100">
+    <main className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
         
-        {/* ヘッダー部分 */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white text-center">
-          <span className="text-xs font-bold bg-white/20 px-3 py-1 rounded-full uppercase tracking-wider">
+        {/* ヘッダー */}
+        <div className="bg-blue-600 p-6 text-white text-center">
+          <span className="text-xs font-bold bg-white/20 px-3 py-1 rounded-full uppercase">
             {quizData.category}
           </span>
-          <h1 className="text-2xl font-black mt-2 tracking-tighter">
-            {quizData.title}
-          </h1>
+          <h1 className="text-xl font-bold mt-2">{quizData.title}</h1>
         </div>
 
-        {/* 問題文エリア */}
-        <div className="p-8">
-          <div className="bg-slate-50 rounded-2xl p-6 leading-loose text-slate-800 text-lg shadow-inner border border-slate-100">
+        {/* 問題文 */}
+        <div className="p-6">
+          <div className="bg-gray-50 rounded-xl p-5 leading-relaxed text-gray-800 text-lg shadow-inner">
             {quizData.textChunks.map((chunk, index) => (
               chunk.type === "text" ? (
                 <span key={index}>{chunk.content}</span>
               ) : (
                 <button
                   key={index}
-                  onClick={() => setShowAll(!showAll)}
-                  className={`mx-1 inline-flex items-center justify-center min-w-[5rem] px-2 py-0.5 rounded-md font-bold transition-all duration-300 ${
-                    showAll 
-                    ? "bg-red-50 text-red-600" 
-                    : "bg-red-500 text-red-500 hover:bg-red-400"
+                  onClick={() => toggleAnswer(chunk.id!)}
+                  className={`mx-1 inline-flex items-center justify-center min-w-[4rem] px-2 py-0.5 rounded-md font-bold transition-all ${
+                    openIds.includes(chunk.id!) 
+                    ? "bg-red-100 text-red-600 border border-red-200" 
+                    : "bg-red-500 text-white shadow-sm active:scale-95"
                   }`}
                 >
-                  {showAll ? chunk.answer : `(${chunk.id})`}
+                  {openIds.includes(chunk.id!) ? chunk.answer : `(${chunk.id})`}
                 </button>
               )
             ))}
           </div>
 
-          <p className="mt-6 text-sm text-slate-500 italic text-center">
-            {quizData.footerInfo}
-          </p>
-        </div>
-
-        {/* アクションボタン */}
-        <div className="px-8 pb-8">
           <button 
-            onClick={() => setShowAll(!showAll)}
-            className={`w-full py-4 rounded-2xl font-black text-lg transition-all active:scale-95 shadow-lg ${
-              showAll 
-              ? "bg-slate-200 text-slate-600" 
-              : "bg-orange-500 text-white hover:bg-orange-600 shadow-orange-200"
-            }`}
+            onClick={() => setOpenIds([])}
+            className="mt-6 w-full py-3 bg-gray-200 text-gray-600 rounded-xl font-bold hover:bg-gray-300 transition"
           >
-            {showAll ? "答えを隠す" : "すべて表示"}
+            すべて隠す
           </button>
         </div>
       </div>
